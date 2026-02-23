@@ -154,7 +154,7 @@ function validatePromo(code, currentTotal) {
 
 const FIXED_ACCOUNTS = {
     'staff_kds': { pass: 'kds5678', role: 'staff', scope: ['staff.html'] },
-    'admin_saran': { pass: 'saran9999', role: 'owner', scope: ['customer.html', 'staff.html', 'owner.html'] }
+    'admin_saran': { pass: 'saran9999', role: 'owner', scope: ['owner.html', 'customer.html', 'staff.html'] }
 };
 
 function handleLogin(username, password) {
