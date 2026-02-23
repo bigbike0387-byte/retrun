@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สั่งอาหาร - ครัวรีเทิน</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">ครัวรีเทิน</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="lang-switcher" class="btn btn-outline btn-sm" onchange="toggleLanguage(this.value)"
+                style="padding: 5px; border-radius: 8px;">
+                <option value="th">🇹🇭 TH</option>
+                <option value="en">🇺🇸 EN</option>
+            </select>
+            <div id="table-info" class="badge badge-paid">โต๊ะ : -</div>
+            <button class="btn btn-outline btn-sm" onclick="handleLogout()" title="ออกจากระบบ"><i
+                    class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Main Actions -->
+        <div class="flex-between mb-2">
+            <h2 id="page-title" data-en="Menu">เมนูอาหาร</h2>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-outline" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="badge badge-primary">0</span>
+                </button>
+                <button class="btn btn-outline" onclick="openIssueModal()">
+                    <i class="fas fa-exclamation-triangle"></i> <span data-en="Report Issue">แจ้งปัญหา</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu List -->
+        <div id="menu-container" class="grid mb-2"></div>
+
+        <!-- Order Status Section -->
+        <div id="active-orders-section" style="display: none;">
+            <hr class="mb-2">
+            <h3 data-en="My Orders">รายการสั่งซื้อของคุณ</h3>
+            <div id="my-orders-list"></div>
+        </div>
+    </main>
+
+    <!-- Floating Chat -->
+    <div
+        style="position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1500;">
+        <button class="btn btn-warning" onclick="handleCallStaff()">
+            <i class="fas fa-bell"></i> <span data-en="Call Staff">เรียกพนักงาน</span>
+        </button>
+        <button class="btn btn-info" onclick="toggleChat()">
+            <i class="fas fa-comment"></i> <span data-en="Chat">แชทพูดคุย</span>
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <div id="cart-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content">
+            <div class="flex-between mb-2">
+                <h3 data-en="Your Cart">ตระกร้าสินค้า</h3>
+                <button class="btn" onclick="toggleCart()" data-en="Close">ปิด</button>
+            </div>
+            <div id="cart-items"></div>
+
+            <!-- Promo Logic -->
+            <div style="background: var(--light); padding: 10px; border-radius: 12px; margin-top: 10px;">
+                <div class="flex-between" style="gap: 10px;">
+                    <input type="text" id="promo-input" placeholder="รหัสส่วนลด (เช่น PROMO10)"
+                        style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <button class="btn btn-sm btn-outline" onclick="applyPromoCode()" data-en="Apply">ใช้โค้ด</button>
+                </div>
+                <div id="promo-msg" style="font-size: 0.8rem; margin-top: 5px; display: none;"></div>
+            </div>
+
+            <hr class="mt-2 mb-2">
+            <div class="flex-between">
+                <strong data-en="Total:">รวมทั้งหมด:</strong>
+                <div style="text-align: right;">
+                    <span id="cart-total-raw"
+                        style="text-decoration: line-through; color: #999; display: none;">0฿</span>
+                    <span id="cart-total" class="text-primary" style="font-size: 1.2rem;">0฿</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="handleConfirmOrder()"
+                data-en="Order Now">
+                ยืนยันการสั่งซื้อ
+            </button>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content" style="text-align: center;">
+            <h3 data-en="Payment">ชำระเงิน</h3>
+            <p id="pay-amount-text" class="mt-2" style="font-size: 1.2rem;"></p>
+            <div
+                style="background: white; padding: 20px; border-radius: 15px; display: inline-block; margin-top: 15px;">
+                <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PROMPTPAY_MOCKUP"
+                    style="width: 200px; height: 200px;">
+                <p class="mt-1" style="color: #0046b8; font-weight: bold;">Thai QR Payment</p>
+            </div>
+            <p class="mt-2" style="color: #666; font-size: 0.9rem;"
+                data-en="Please show this unique code after scanning.">กรุณาแจ้งพนักงานหลังจากสแกนสำเร็จ</p>
+            <button class="btn btn-success mt-2" style="width: 100%;" onclick="confirmPaymentSimulation()"
+                data-en="I have paid">ฉันชำระเงินแล้ว</button>
+        </div>
+    </div>
+
+    <div id="review-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content" style="text-align: center;">
+            <h3 data-en="Rate your Experience">ประเมินความพึงพอใจ</h3>
+            <p class="mt-1" data-en="How was your meal?">อาหารวันนี้เป็นอย่างไรบ้างครับ?</p>
+            <div id="star-rating" style="font-size: 2rem; color: #ffcc00; margin: 15px 0; cursor: pointer;">
+                <i class="far fa-star" onclick="setRating(1)"></i>
+                <i class="far fa-star" onclick="setRating(2)"></i>
+                <i class="far fa-star" onclick="setRating(3)"></i>
+                <i class="far fa-star" onclick="setRating(4)"></i>
+                <i class="far fa-star" onclick="setRating(5)"></i>
+            </div>
+            <textarea id="review-comment" placeholder="คำติชมเพิ่มเติม..."
+                style="width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;"></textarea>
+            <button class="btn btn-primary mt-2" style="width: 100%;" onclick="handleSaveReview()"
+                data-en="Submit Review">บันทึกรีวิว</button>
+        </div>
+    </div>
+
+    <div id="chat-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content" style="height: 500px; display: flex; flex-direction: column;">
+            <div class="flex-between mb-2">
+                <h3>แชทกับครัว</h3>
+                <button class="btn" onclick="toggleChat()">ปิด</button>
+            </div>
+            <div id="chat-box"
+                style="flex-grow: 1; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 10px;">
+            </div>
+            <div class="mt-2 flex-between" style="gap: 10px;">
+                <input type="text" id="chat-input" placeholder="พิมพ์ข้อความ..."
+                    style="flex-grow: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
+                <button class="btn btn-primary" onclick="handleSendMessageAtCustomer()"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="issue-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content">
+            <div class="flex-between mb-2">
+                <h3>แจ้งปัญหา / ต้องการความช่วยเหลือ</h3>
+                <button class="btn" onclick="openIssueModal()">ปิด</button>
+            </div>
+            <textarea id="issue-text" placeholder="ระบุปัญหาของคุณ เช่น อาหารช้า, ไม่ได้รับจาน..."
+                style="width: 100%; height: 100px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;"></textarea>
+            <button class="btn btn-danger mt-2" style="width: 100%;"
+                onclick="handleSubmitIssue()">ส่งเรื่องแจ้งปัญหา</button>
+            <div id="my-issues" class="mt-2"></div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/sync-template.js"></script>
+    <script src="js/customer.js"></script>
+</body>
+
+</html>

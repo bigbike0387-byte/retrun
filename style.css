@@ -1,0 +1,261 @@
+/* style.css - ระบบดีไซน์ "ครัวรีเทิน" (Updated with Report/Issue) */
+
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+
+:root {
+    --primary: #ff4757;
+    --secondary: #2f3542;
+    --success: #198754;
+    --warning: #fd7e14;
+    --info: #0d6efd;
+    --purple: #6f42c1;
+    --danger: #dc3545;
+    --light: #f1f2f6;
+    --dark: #2f3542;
+    --gray: #6c757d;
+
+    --waiting: var(--gray);
+    --cooking: var(--warning);
+    --ready: var(--info);
+    --served: var(--success);
+    --paid: var(--purple);
+
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.4);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Kanit', sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--dark);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+}
+
+.btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+}
+
+.badge-waiting {
+    background: var(--waiting);
+}
+
+.badge-cooking {
+    background: var(--cooking);
+}
+
+.badge-ready {
+    background: var(--ready);
+}
+
+.badge-served {
+    background: var(--served);
+}
+
+.badge-paid {
+    background: var(--paid);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* Report Styles */
+.stat-card {
+    text-align: center;
+    padding: 25px;
+    border-left: 5px solid var(--primary);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid var(--light);
+    color: var(--gray);
+    font-weight: 500;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--light);
+}
+
+/* Chat Bubbles */
+.chat-msg {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.msg-content {
+    max-width: 80%;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+}
+
+.msg-customer {
+    align-self: flex-end;
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.msg-staff {
+    align-self: flex-start;
+    background: #eee;
+    color: var(--dark);
+    border-bottom-left-radius: 2px;
+}
+
+/* Modal Glassmorphism */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mt-2 {
+    margin-top: 15px;
+}
+
+.mb-2 {
+    margin-bottom: 15px;
+}
+
+.text-primary {
+    color: var(--primary);
+}

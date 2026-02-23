@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard - ครัวรีเทิน</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-table img {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .stock-warning {
+            color: var(--danger);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">Owner Portal <small>(คุณศรัณ)</small></div>
+        <nav style="display: flex; gap: 10px; align-items: center;">
+            <div id="owner-noti-badge" class="badge badge-danger" style="display: none;">!</div>
+            <button class="btn btn-outline btn-sm" onclick="handleLogout()" title="ออกจากระบบ"><i
+                    class="fas fa-sign-out-alt"></i></button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Dashboard Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('reports')"><i class="fas fa-chart-line"></i> รายงาน &
+                วิเคราะห์</button>
+            <button class="tab-btn" onclick="switchTab('management')"><i class="fas fa-tasks"></i>
+                จัดการร้านหลังบ้าน</button>
+        </div>
+
+        <!-- Section 1: Reports -->
+        <div id="tab-reports" class="tab-content active">
+            <div class="grid mb-2">
+                <div class="card stat-card" style="border-left-color: var(--success);">
+                    <i class="fas fa-coins fa-2x text-primary"></i>
+                    <h2 id="sales-daily" class="mt-2">0฿</h2>
+                    <p>ยอดขายวันนี้</p>
+                </div>
+                <div class="card stat-card" style="border-left-color: var(--info);">
+                    <i class="fas fa-calendar-check fa-2x text-primary"></i>
+                    <h2 id="sales-monthly" class="mt-2">0฿</h2>
+                    <p>ยอดขายเดือนนี้</p>
+                </div>
+                <div class="card stat-card" style="border-left-color: var(--purple);">
+                    <i class="fas fa-receipt fa-2x text-primary"></i>
+                    <h2 id="total-paid-orders" class="mt-2">0</h2>
+                    <p>บิลที่ชำระแล้ว</p>
+                </div>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 2fr 1fr;">
+                <section>
+                    <div class="card">
+                        <h3>สถิติยอดขายรายชั่วโมง (วันนี้)</h3>
+                        <div id="hourly-chart"
+                            style="display: flex; align-items: flex-end; gap: 5px; height: 120px; margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 5px;">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>ประวัติการเงิน</h3>
+                            <button class="btn btn-sm btn-outline" onclick="handleExportData()">Excel CSV</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>โต๊ะ</th>
+                                        <th>ยอดรวม</th>
+                                        <th>เวลา</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="owner-history-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <aside>
+                    <div class="card">
+                        <h3>5 อันดับยอดนิยม</h3>
+                        <div id="owner-best-sellers" class="mt-2"></div>
+                    </div>
+                    <div class="card">
+                        <h3>คำติชมลูกค้า</h3>
+                        <div id="owner-review-list" class="mt-2" style="max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Section 2: Management -->
+        <div id="tab-management" class="tab-content">
+            <div class="grid" style="grid-template-columns: 1.2fr 2fr;">
+                <aside>
+                    <!-- Quick Issue Support -->
+                    <div class="card" style="background: #fff5f5; border-color: #feb2b2;">
+                        <h3>🔔 ศูนย์รับแจ้งปัญหา</h3>
+                        <div id="owner-issue-list" class="mt-2"></div>
+                    </div>
+
+                    <!-- Promo Management -->
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>🎁 โปรโมชั่น</h3>
+                            <button class="btn btn-sm btn-primary" onclick="openPromoModal()">เพิ่ม</button>
+                        </div>
+                        <div id="owner-promo-list" class="mt-2"></div>
+                    </div>
+
+                    <!-- Staff Status -->
+                    <div class="card" style="background: var(--dark); color: white;">
+                        <h4>สถานะระบบ</h4>
+                        <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 10px;">
+                            สถานะร้าน: <span class="badge badge-success">เปิด</span><br>
+                            KDS ออนไลน์: staff_kds<br>
+                            ระบบซิงค์: <i class="fas fa-check-circle text-success"></i> Connected
+                        </p>
+                    </div>
+                </aside>
+
+                <section>
+                    <div class="card">
+                        <div class="flex-between">
+                            <h3>จัดการเมนูและสต็อกสินค้า</h3>
+                            <button class="btn btn-primary" onclick="openMenuModal()">+ เพิ่มเมนูใหม่</button>
+                        </div>
+                        <div class="table-responsive mt-2">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>รูป</th>
+                                        <th>ชื่อ</th>
+                                        <th>ราคา</th>
+                                        <th>สต็อก</th>
+                                        <th>จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="owner-menu-manage-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="menu-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content">
+            <h3 id="menu-modal-title">เพิ่มเมนูอาหาร</h3>
+            <form id="menu-form" onsubmit="handleSaveMenu(event)" class="mt-2">
+                <input type="hidden" id="edit-menu-id">
+                <div class="mb-2">
+                    <label>ชื่อเมนู</label>
+                    <input type="text" id="m-name" required class="form-control">
+                </div>
+                <div class="grid mb-2">
+                    <div><label>ราคา (฿)</label><input type="number" id="m-price" required class="form-control"></div>
+                    <div><label>สต็อก</label><input type="number" id="m-stock" required class="form-control"></div>
+                </div>
+                <div class="mb-2">
+                    <label>หมวดหมู่</label>
+                    <select id="m-cat" class="form-control">
+                        <option>จานเดียว</option>
+                        <option>กับข้าว</option>
+                        <option>ทานเล่น</option>
+                        <option>เครื่องดื่ม</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label>URL รูปภาพ</label>
+                    <input type="text" id="m-img" class="form-control" placeholder="https://...">
+                </div>
+                <div class="flex-between mt-2" style="gap:10px;">
+                    <button type="submit" class="btn btn-primary" style="flex:2">บันทึก</button>
+                    <button type="button" class="btn btn-outline" style="flex:1"
+                        onclick="closeMenuModal()">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="promo-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content">
+            <h3>จัดการรหัสส่วนลด</h3>
+            <form id="promo-form" onsubmit="handleSavePromo(event)" class="mt-2">
+                <div class="mb-2"><label>โค้ด</label><input type="text" id="p-code" required class="form-control"
+                        placeholder="เช่น HELLO10"></div>
+                <div class="grid mb-2">
+                    <div><label>ประเภท</label><select id="p-type" class="form-control">
+                            <option value="percent">%</option>
+                            <option value="flat">฿</option>
+                        </select></div>
+                    <div><label>มูลค่า</label><input type="number" id="p-value" required class="form-control"></div>
+                </div>
+                <div class="mb-2"><label>ขั้นต่ำ (฿)</label><input type="number" id="p-min" required
+                        class="form-control"></div>
+                <div class="flex-between mt-2" style="gap:10px;">
+                    <button type="submit" class="btn btn-primary" style="flex:2">บันทึก</button>
+                    <button type="button" class="btn btn-outline" style="flex:1"
+                        onclick="closePromoModal()">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="resolve-modal" class="modal-overlay" style="display: none;">
+        <div class="card modal-content">
+            <h3 id="resolve-title">ตอบกลับปัญหา</h3>
+            <p id="resolve-info" class="mt-1" style="background:#eee; padding:10px; border-radius:8px;"></p>
+            <textarea id="resolve-text" placeholder="ระบุวิธีแก้ไข..." class="mt-2"
+                style="width:100%; height:80px; padding:10px; border-radius:10px; border:1px solid #ddd;"></textarea>
+            <button class="btn btn-primary mt-2" style="width:100%"
+                onclick="handleConfirmResolve()">ยืนยันแก้ไข</button>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/sync-template.js"></script>
+    <script src="js/owner.js"></script>
+</body>
+
+</html>

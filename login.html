@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - ครัวรีเทิน</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            background: #eee;
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .role-btn.active {
+            border-color: var(--primary);
+            background: white;
+            color: var(--primary);
+        }
+
+        .pin-input {
+            width: 100%;
+            font-size: 2rem;
+            text-align: center;
+            letter-spacing: 0.5rem;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card login-card fade-in">
+        <h1 class="logo mb-2">ครัวรีเทิน</h1>
+        <p class="mb-2" style="color: #666;">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="font-size: 0.9rem; color: #555;">ชื่อผู้ใช้งาน (Username)</label>
+            <input type="text" id="login-username" class="pin-input"
+                style="font-size: 1.2rem; letter-spacing: normal; margin-bottom: 0; padding: 12px;"
+                placeholder="ระบุชื่อผู้ใช้งาน">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 25px;">
+            <label style="font-size: 0.9rem; color: #555;">รหัสผ่าน (Password)</label>
+            <input type="password" id="login-password" class="pin-input"
+                style="font-size: 1.2rem; letter-spacing: normal; margin-bottom: 0; padding: 12px;"
+                placeholder="••••••••">
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;"
+            onclick="performLogin()">เข้าสู่ระบบ</button>
+        <p id="login-error" style="color: var(--danger); margin-top: 15px; display: none;"></p>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+            ยังไม่มีบัญชีลูกค้า? <a href="register.html"
+                style="color: var(--primary); text-decoration: none; font-weight: bold;">สมัครสมาชิกที่นี่</a>
+        </p>
+
+        <div class="mt-2" style="font-size: 0.8rem; color: #888; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="margin-bottom: 5px;"><strong>การจำลองบัญชี:</strong></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; text-align: left;">
+                <span>ลูกค้า: customer</span> <span>/ krua123</span>
+                <span>พนักงาน: staff_kds</span> <span>/ kds5678</span>
+                <span>เจ้าของ: admin_saran</span> <span>/ saran9999</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/login.js"></script>
+</body>
+
+</html>

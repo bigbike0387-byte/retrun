@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก - ครัวรีเทิน</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .reg-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card reg-card fade-in">
+        <h1 class="logo mb-1">สมัครสมาชิก</h1>
+        <p class="mb-2" style="color: #666;">ครอบครัว "ครัวรีเทิน" ยินดีต้อนรับครับ</p>
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="font-size: 0.9rem;">ชื่อเล่น / ชื่อที่ใช้แสดง</label>
+            <input type="text" id="reg-nickname" class="pin-input"
+                style="font-size: 1.1rem; letter-spacing: normal; padding: 12px;" placeholder="เช่น น้องศรัณ">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="font-size: 0.9rem;">ชื่อผู้ใช้งาน (Username)</label>
+            <input type="text" id="reg-username" class="pin-input"
+                style="font-size: 1.1rem; letter-spacing: normal; padding: 12px;" placeholder="ระบุภาษาอังกฤษ/ตัวเลข">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 25px;">
+            <label style="font-size: 0.9rem;">รหัสผ่าน (Password)</label>
+            <input type="password" id="reg-password" class="pin-input"
+                style="font-size: 1.1rem; letter-spacing: normal; padding: 12px;" placeholder="••••••••">
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; padding: 15px;"
+            onclick="performRegister()">ยืนยันการสมัคร</button>
+        <p id="reg-error" style="color: var(--danger); margin-top: 15px; display: none;"></p>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+            มีบัญชีอยู่แล้ว? <a href="login.html"
+                style="color: var(--primary); text-decoration: none; font-weight: bold;">เข้าสู่ระบบที่นี่</a>
+        </p>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script>
+        function performRegister() {
+            const nick = document.getElementById('reg-nickname').value.trim();
+            const user = document.getElementById('reg-username').value.trim();
+            const pass = document.getElementById('reg-password').value.trim();
+
+            if (!nick || !user || !pass) {
+                showRegError('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                return;
+            }
+
+            const result = handleRegister(user, pass, nick);
+            if (result.success) {
+                alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบครับ');
+                window.location.href = 'login.html';
+            } else {
+                showRegError(result.message);
+            }
+        }
+
+        function showRegError(msg) {
+            const err = document.getElementById('reg-error');
+            err.innerText = msg;
+            err.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
